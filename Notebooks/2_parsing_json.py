@@ -1,23 +1,8 @@
-# Merging the TMDB 5000 Movie Dataset (tmdb_5000_movies.csv) and TMDB 5000 Credits Dataset (tmdb_5000_credits.csv)
 # Parsing and flattening JSON columns (genres, keywords, cast, crew)
-# Handling missing values, data type conversions, and duplicates
-
 import pandas as pd
-import numpy as np
 import json
 
-movies_df = pd.read_csv('Data/tmdb_5000_movies.csv')
-credits_df = pd.read_csv('Data/tmdb_5000_credits.csv')
-
-merged_df = pd.merge(movies_df, credits_df, left_on='id', right_on='movie_id', how='inner')
-merged_df.drop('movie_id', axis=1, inplace=True)
-
-merged_df = pd.read_csv('Data/tmdb_5000_merged.csv')
-
-# Removing duplicate title columns, keep title_x (rename to title) and drop title_y
-if 'title_x' in merged_df.columns and 'title_y' in merged_df.columns:
-    merged_df = merged_df.drop('title_y', axis=1)
-    merged_df = merged_df.rename(columns={'title_x': 'title'})
+merged_df = pd.read_csv('../Data/clean_tmdb_5000_merged.csv')
 
 # Parse genres column, replace with comma-separated list
 def parse_genres(x):
@@ -82,8 +67,8 @@ def parse_production_countries(x):
         return ''
 merged_df['production_countries'] = merged_df['production_countries'].apply(parse_production_countries)
 
-output_filename = 'Data/tmdb_5000_merged.csv'
+output_filename = '../Data/clean_parsed_tmdb_5000.csv'
 merged_df.to_csv(output_filename, index=False)
 print(f"Parsed data saved to {output_filename}")
 
-# Needs missing value handling, data type conversions, and duplicate removal
+# Missing values, data type conversions, and duplicate removal were handled during data cleaning
